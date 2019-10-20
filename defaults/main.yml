@@ -1,0 +1,11 @@
+prepare_fs: False
+prepare_os: False
+cgroups_enable: False
+oracle_jdk: False
+open_jdk: False
+open_jdk_version: 11
+yum_repos: False
+sattelite_repo: False
+provider: 'yum'
+fs: []
+  

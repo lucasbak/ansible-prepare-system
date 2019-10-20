@@ -1,0 +1,21 @@
+- name: Install Client
+  yum:
+    name: ipa-client
+    state: present
+
+- name: Check Ipa client already setup
+  shell: echo '{{ipaadmin_password}}' | kinit {{ipaserver_principal}} >/dev/null &&  ipa host-find "{{ inventory_hostname }}" 
+  register: client_exist
+  delegate_to: "{{ipaserver_server}}"
+  ignore_errors: True
+
+- name: Execute setup command
+  shell: >
+    ipa-client-install -U \
+    --server {{ipaserver_server}} \
+    --realm '{{ipaserver_realm}}' \
+    {% if ipaadmin_password is defined%} -p admin -w '{{ipaadmin_password}}' \ {% endif %} 
+    {% if ipaserver_principal is defined%}  --principal={{ipaserver_principal}} \ {% endif %} 
+    --hostname '{{ inventory_hostname }}' \
+    --domain '{{ipaserver_domain}}'
+  when: client_exist.rc == 1

@@ -1,0 +1,19 @@
+group yarn {
+  perm {
+    admin {
+      uid = yarn;
+      gid = yarn;
+    }
+    task {
+      uid = yarn;
+      gid = yarn;
+    }
+  }
+  cpu {
+    cpu.rt_period_us = "1000000";
+    cpu.rt_runtime_us = "0";
+    cpu.cfs_period_us = "100000";
+    cpu.cfs_quota_us = "-1";
+    cpu.shares = "1024";
+  }
+}

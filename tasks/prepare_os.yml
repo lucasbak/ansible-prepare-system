@@ -1,0 +1,92 @@
+# SELinux Settings
+
+- name: get status SELinux
+  shell : getenforce
+  register: selinux_status
+
+- name: Disable SELinux
+  selinux: state=disabled
+  when: (selinux_status.stdout == 'Permissive') or (selinux_status.stdout == 'Enforce') or (selinux_status.stdout == 'Enforcing')
+
+## THP Settings
+
+- name: get THP Enabled
+  shell: cat /sys/kernel/mm/transparent_hugepage/enabled | egrep -o '(\[always\])|(\[madvise\])|(\[never\])|(\[defer\])'
+  register: thp_enabled
+  ignore_errors: True
+
+- name: get THP Defrag
+  shell: cat /sys/kernel/mm/transparent_hugepage/defrag | egrep -o '(\[always\])|(\[madvise\])|(\[never\])|(\[defer\])'
+  register: defrag_enabled
+  ignore_errors: True
+
+- name: Disable THP
+  shell: >
+    echo never > /sys/kernel/mm/transparent_hugepage/enabled
+    echo never > /sys/kernel/mm/transparent_hugepage/defrag
+  when: (thp_enabled.stdout == '[always]') or (thp_enabled.stdout == '[msadvise]') or (thp_enabled.stdout == '[defer]')
+
+- name: Disable Defrag
+  shell: >
+    echo never > /sys/kernel/mm/transparent_hugepage/defrag
+  when: (defrag_enabled.stdout == '[always]') or (defrag_enabled.stdout == '[msadvise]') or (defrag_enabled.stdout == '[defer]')
+
+
+# Kernel Settings
+
+- name: Sysctl 
+  copy:
+    src: templates/kernel-custom.conf.j2
+    dest: /etc/sysctl.d/kernel-custom.conf
+  register: copy_sysctl
+
+
+- name: pass kernel option
+  shell: sysctl -p /etc/sysctl.d/kernel-custom.conf
+
+# Network settings
+
+- name: Remove 127.0.0.1 "hostname" from /etc/hosts
+  lineinfile:
+    dest=/etc/hosts
+    regexp='127\.0\.0\.1 {{ inventory_hostname }}'
+    state=absent
+
+- name: Update /etc/hosts
+  lineinfile: dest=/etc/hosts regexp='.*{{item.fqdn}}$' line='{{item.ip}} {{item.fqdn}} {{item.shortname}}' state=present
+  with_items: "{{ hostnames }}"
+  tags:
+    - hosts
+
+- name: full fqdn
+  shell: "hostnamectl set-hostname {{inventory_hostname}} --static"
+
+- name: short fqdn
+  shell: "shortname=`cut -d '.' -f 1 <<< {{inventory_hostname}}`; hostnamectl set-hostname $shortname --transient"
+
+## Hadoop Group
+- name: Add group "hadoop"
+  group:
+    name: hadoop
+    gid: 2400
+    state: present
+    system: yes
+
+## Security Settings
+
+- name: Keytab dir
+  file:
+    path: /etc/security/keytabs
+    state: directory
+
+- name: ServerKeys dir
+  file:
+    path: /etc/security/serverKeys
+    state: directory
+
+- name: Disable ssl check for python
+  lineinfile:
+    path: /etc/python/cert-verification.cfg
+    regexp: '^verify='
+    line: 'verify=disable'
+    state: present

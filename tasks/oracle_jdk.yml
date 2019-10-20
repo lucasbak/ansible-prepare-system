@@ -1,0 +1,40 @@
+
+- name: Check JDK exist
+  shell: "/usr/java/default/bin/java -version | grep {{java_jdk_version}}"
+  register: jdk_version_installed
+  ignore_errors: True
+
+- name: "Copy Java JDK  {{java_jdk_name}}"
+  copy:
+    src: "{{java_jdk_source}}"
+    dest: "/tmp/{{java_jdk_name}}"
+  when: jdk_version_installed.rc == 1
+
+- name: Create dir Java
+  file:
+    state: directory
+    path: /usr/java
+  when: jdk_version_installed.rc == 1
+
+- name: Create dir Java Default
+  file:
+    state: directory
+    path: /usr/java/jdk{{java_jdk_version}}
+  when: jdk_version_installed.rc == 1
+
+- name: Extract Java JDK to /usr/java/default
+  shell: tar -xzf "/tmp/{{java_jdk_name}}" -C  /usr/java/jdk{{java_jdk_version}} --strip-components 1
+  when: jdk_version_installed.rc == 1
+
+- name: "Link Default to {{java_jdk_version}}"
+  shell: ln -sf /usr/java/jdk{{java_jdk_version}} /usr/java/default
+  when: jdk_version_installed.rc == 1
+
+- name: Set Env variable
+  copy:
+    src: templates/java.sh.j2
+    dest: /etc/profile.d/java.sh
+    mode: 0755
+
+- name: Check
+  shell: /usr/java/default/bin/java -version

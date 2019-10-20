@@ -1,0 +1,19 @@
+
+- name: Check Service Exist
+  shell: >
+    echo '{{ipaadmin_password}}' | kinit {{ipaserver_principal}} >/dev/null &&  ipa service-find {{item.name}}/{{inventory_hostname}}@{{ipaserver_realm}}
+  register: service_exist
+  ignore_errors: True
+
+- name: Create Service
+  shell: >
+    echo '{{ipaadmin_password}}' | kinit {{ipaserver_principal}} >/dev/null && ipa service-add --ok-as-delegate=TRUE {{item.name}}/{{inventory_hostname}}@{{ipaserver_realm}}
+  when: service_exist.rc == 1
+
+- name: Fetch Keytab
+  shell: >
+    echo '{{ipaadmin_password}}' | kinit {{ipaserver_principal}} >/dev/null && ipa-getkeytab -p '{{item.name}}/{{inventory_hostname}}@{{ipaserver_realm}}' -k {{item.keytab}}
+
+- name: Owner
+  shell: >
+    chown {{item.owner}}:{{item.group}} {{item.keytab}}

@@ -1,0 +1,27 @@
+- name: Install cgroups lib 
+  yum:
+    name={{item}}
+    state=installed
+    update_cache=yes
+  with_items:
+    - libcgroup
+    - libcgroup-tools
+- name: Copy systemd service for ambari-agent
+  template:
+    src: yarn.conf.j2
+    dest: /etc/cgconfig.d/yarn.conf.j2
+
+- name: Enable chkconfig
+  command: chkconfig cgconfig on
+
+- name: Enable service cgconfig
+  systemd:
+    enabled: yes
+    masked: no
+    name: cgconfig.service
+
+- name: Restart service cgconfig
+  systemd:
+    state: started
+    name: cgconfig
+

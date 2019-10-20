@@ -1,0 +1,43 @@
+## Delete Centos Repo
+
+- name:  Delete Centos Files
+  file:
+   path: "{{ item }}"
+   state: absent
+  when: not sattelite_repo and do_yum
+  with_items:
+  - /etc/yum.repos.d/CentOS-Base.repo
+  - /etc/yum.repos.d/CentOS-CR.repo
+
+## Copy Repo files
+
+- name: Copy Repo
+  copy:
+    src: "{{ item }}"
+    dest: /etc/yum.repos.d/
+  with_fileglob:
+    - "{{source_repo_folder}}/*.repo"
+
+## Required Packages
+
+- name: Required packages
+  yum: name={{item}} state=installed
+  with_items:
+    - vim-common
+    - tree
+    - git
+    - nano
+    - vim
+    - bash-completion
+    - unzip
+    - net-tools
+    - wget
+    
+- name: Required packages
+  yum: name={{item}} state=installed
+  with_items:
+    - epel-release
+  when: not sattelite_repo
+
+- name: Clean DBCache
+  command: yum clean all

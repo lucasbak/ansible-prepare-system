@@ -1,0 +1,525 @@
+
+- name: Add group "hadoop"
+  group:
+    name: hadoop
+    gid: 2400
+    state: present
+    system: yes
+- name: Add group "ambari"
+  group:
+    name: ambari
+    gid: 2408
+    state: present
+    system: yes
+- name: Add group "zookeeper"
+  group:
+    name: zookeeper
+    gid: 2402
+    state: present
+    system: yes
+- name: Add group "hdfs"
+  group:
+    name: hdfs
+    gid: 2401
+    state: present
+    system: yes
+- name: Add group "yarn"
+  group:
+    name: yarn
+    gid: 2403
+    state: present
+    system: yes
+- name: Add group "mapred"
+  group:
+    name: mapred
+    gid: 2404
+    state: present
+    system: yes
+- name: Add group "flume"
+  group:
+    name: flume
+    gid: 2405
+    state: present
+    system: yes
+- name: Add group "hive"
+  group:
+    name: hive
+    gid: 2407
+    state: present
+    system: yes
+- name: Add group "hbase"
+  group:
+    name: hbase
+    gid: 2409
+    state: present
+    system: yes
+- name: Add group "hue"
+  group:
+    name: hue
+    gid: 2410
+    state: present
+    system: yes
+- name: Add group "oozie"
+  group:
+    name: oozie
+    gid: 2411
+    state: present
+    system: yes
+- name: Add group "sqoop"
+  group:
+    name: sqoop
+    gid: 2412
+    state: present
+    system: yes
+- name: Add group "knox"
+  group:
+    name: knox
+    gid: 2420
+    state: present
+    system: yes
+- name: Add group "falcon"
+  group:
+    name: falcon
+    gid: 2421
+    state: present
+    system: yes
+- name: Add group "kafka"
+  group:
+    name: kafka
+    gid: 2424
+    state: present
+    system: yes
+- name: Add group "spark"
+  group:
+    name: spark
+    gid: 2426
+    state: present
+    system: yes
+- name: Add group "solr"
+  group:
+    name: solr
+    gid: 2432
+    state: present
+    system: yes
+- name: Add group "ranger"
+  group:
+    name: ranger
+    gid: 2434
+    state: present
+    system: yes
+- name: Add group "smartsense"
+  group:
+    name: smartsense
+    gid: 2436
+    state: present
+    system: yes
+- name: Add group "atlas"
+  group:
+    name: atlas
+    gid: 2437
+    state: present
+    system: yes
+- name: Add group "zeppelin"
+  group:
+    name: zeppelin
+    gid: 2438
+    state: present
+    system: yes
+- name: Add group "livy"
+  group:
+    name: livy
+    gid: 2439
+    state: present
+    system: yes
+- name: Add group "phoenix"
+  group:
+    name: phoenix
+    gid: 2441
+    state: present
+    system: yes
+- name: Add group "ams"
+  group:
+    name: ams
+    gid: 2442
+    state: present
+    system: yes
+- name: Add group "infra-solr"
+  group:
+    name: infra-solr
+    gid: 2443
+    state: present
+    system: yes
+- name: Add group "hcat"
+  group:
+    name: hcat
+    gid: 2444
+    state: present
+    system: yes
+- name: Add group "tez"
+  group:
+    name: tez
+    gid: 2447
+    state: present
+    system: yes
+- name: Add group "ambari-qa"
+  group:
+    name: ambari-qa
+    gid: 2448
+    state: present
+    system: yes
+- name: Add group "activity_analyzer"
+  group:
+    name: activity_analyzer
+    gid: 2449
+    state: present
+    system: yes
+- name: Add group "slider"
+  group:
+    name: slider
+    gid: 2450
+    state: present
+    system: yes
+- name: Add group "logsearch"
+  group:
+    name: logsearch
+    gid: 2451
+    state: present
+    system: yes
+- name: Add group "kms"
+  group:
+    name: kms
+    gid: 2453
+    state: present
+    system: yes
+- name: Add group "druid"
+  group:
+    name: druid
+    gid: 2455
+    state: present
+    system: yes
+- name: Add user "ambari"
+  user:
+    name: ambari
+    uid: 2408
+    group: ambari
+    groups: hadoop
+    system: yes
+    home: /var/lib/ambari
+    createhome: yes
+    comment: Ambari User
+- name: Add user "zookeeper"
+  user:
+    name: zookeeper
+    uid: 2402
+    group: zookeeper
+    system: yes
+    createhome: yes
+    comment: Zookeeper User
+- name: Add user "hdfs"
+  user:
+    name: hdfs
+    uid: 2401
+    group: hdfs
+    groups: hadoop
+    system: yes
+    home: /var/lib/hadoop-hdfs
+    createhome: yes
+    comment: Hadoop HDFS User
+- name: Add user "yarn"
+  user:
+    name: yarn
+    uid: 2403
+    group: yarn
+    groups: hadoop
+    system: yes
+    home: /var/lib/hadoop-yarn
+    createhome: yes
+    comment: Hadoop YARN User
+- name: Add user "mapred"
+  user:
+    name: mapred
+    uid: 2404
+    group: mapred
+    groups: hadoop
+    system: yes
+    home: /var/lib/hadoop-mapreduce
+    createhome: yes
+    comment: Hadoop MapReduce User
+- name: Add user "flume"
+  user:
+    name: flume
+    uid: 2405
+    group: flume
+    system: yes
+    home: /var/lib/flume
+    createhome: yes
+    comment: Flume User
+- name: Add user "hive"
+  user:
+    name: hive
+    uid: 2407
+    group: hive
+    groups: hadoop
+    system: yes
+    home: /var/lib/hive
+    createhome: yes
+    comment: Hive User
+- name: Add user "hbase"
+  user:
+    name: hbase
+    uid: 2409
+    group: hbase
+    groups: hadoop
+    system: yes
+    home: /var/run/hbase
+    createhome: yes
+    comment: HBase User
+- name: Add user "hue"
+  user:
+    name: hue
+    uid: 2410
+    group: hue
+    system: yes
+    shell: /bin/bash
+    home: /var/lib/hue
+    createhome: yes
+    comment: Hue User
+- name: Add user "oozie"
+  user:
+    name: oozie
+    uid: 2411
+    group: oozie
+    groups: hadoop
+    system: yes
+    shell: /bin/bash
+    home: /var/lib/oozie
+    createhome: yes
+    comment: Oozie User
+- name: Add user "sqoop"
+  user:
+    name: sqoop
+    uid: 2412
+    group: sqoop
+    system: yes
+    home: /var/lib/sqoop
+    createhome: yes
+    comment: Sqoop User
+- name: Add user "knox"
+  user:
+    name: knox
+    uid: 2420
+    group: knox
+    system: yes
+    home: /var/lib/knox
+    createhome: yes
+    comment: Knox Gateway User
+- name: Add user "falcon"
+  user:
+    name: falcon
+    uid: 2421
+    group: falcon
+    groups: hadoop
+    system: yes
+    shell: /bin/bash
+    home: /var/lib/falcon
+    createhome: yes
+    comment: Falcon User
+- name: Add user "kafka"
+  user:
+    name: kafka
+    uid: 2424
+    group: kafka
+    system: yes
+    shell: /bin/bash
+    home: /var/lib/kafa
+    createhome: yes
+    comment: Kafka User
+- name: Add user "spark"
+  user:
+    name: spark
+    uid: 2426
+    group: spark
+    groups: hadoop
+    system: yes
+    shell: /bin/bash
+    home: /var/lib/spark
+    createhome: yes
+    comment: Spark User
+- name: Create home directory
+  shell: mkdir -p /var/solr/data
+- name: Add user "solr"
+  user:
+    name: solr
+    uid: 2432
+    group: solr
+    groups: hadoop
+    system: yes
+    home: /var/solr/data/
+    createhome: yes
+    comment: Solr User
+- name: Add user "ranger"
+  user:
+    name: ranger
+    uid: 2434
+    group: ranger
+    groups: hadoop
+    system: yes
+    shell: /bin/bash
+    home: /var/lib/ranger
+    createhome: yes
+    comment: Ranger User
+- name: Add user "smartsense"
+  user:
+    name: smartsense
+    uid: 2436
+    group: smartsense
+    system: yes
+    shell: /bin/bash
+    home: /var/lib/smartsense
+    createhome: yes
+    comment: Hortonworks SmartSense User
+- name: Add user "atlas"
+  user:
+    name: atlas
+    uid: 2437
+    group: atlas
+    system: yes
+    home: /var/lib/atlas
+    createhome: yes
+    comment: Atlas User
+- name: Add user "zeppelin"
+  user:
+    name: zeppelin
+    uid: 2438
+    group: zeppelin
+    system: yes
+    shell: /bin/bash
+    home: /var/lib/zeppelin
+    createhome: yes
+    comment: Zeppelin User
+- name: Add user "livy"
+  user:
+    name: livy
+    uid: 2439
+    group: livy
+    groups: hadoop
+    system: yes
+    shell: /bin/bash
+    home: /var/lib/livy
+    createhome: yes
+    comment: Livy User
+- name: Add user "phoenix"
+  user:
+    name: phoenix
+    uid: 2441
+    group: phoenix
+    system: yes
+    shell: /bin/bash
+    home: /var/lib/phoenix
+    createhome: yes
+    comment: Phoenix User
+- name: Add user "ams"
+  user:
+    name: ams
+    uid: 2442
+    group: ams
+    system: yes
+    shell: /bin/bash
+    home: /home/ams
+    createhome: yes
+    comment: Ambari Metrics User
+- name: Add user "infra-solr"
+  user:
+    name: infra-solr
+    uid: 2443
+    group: infra-solr
+    groups: hadoop
+    system: yes
+    shell: /bin/bash
+    home: /home/infra-solr
+    createhome: yes
+    comment: Infra Solr User
+- name: Add user "hcat"
+  user:
+    name: hcat
+    uid: 2444
+    group: hcat
+    groups: hadoop
+    system: yes
+    shell: /bin/bash
+    home: /home/hcat
+    createhome: yes
+    comment: HCatalog User
+- name: Add user "tez"
+  user:
+    name: tez
+    uid: 2447
+    group: tez
+    system: yes
+    shell: /bin/bash
+    home: /home/tez
+    createhome: yes
+    comment: Tez User
+- name: Add user "ambari-qa"
+  user:
+    name: ambari-qa
+    uid: 2448
+    group: ambari-qa
+    groups: hadoop
+    system: yes
+    shell: /bin/bash
+    home: /home/ambari-qa
+    createhome: yes
+    comment: Ambari-qa User
+- name: Add user "activity_analyzer"
+  user:
+    name: activity_analyzer
+    uid: 2449
+    group: activity_analyzer
+    system: yes
+    shell: /bin/bash
+    home: /home/activity_analyzer
+    createhome: yes
+    comment: Activity analyzer User
+- name: Add user "slider"
+  user:
+    name: slider
+    uid: 2450
+    group: slider
+    system: yes
+    shell: /bin/bash
+    home: /var/lib/slider
+    createhome: yes
+    comment: Slider User
+- name: Add user "logsearch"
+  user:
+    name: logsearch
+    uid: 2451
+    group: logsearch
+    system: yes
+    shell: /bin/bash
+    home: /home/logsearch
+    createhome: yes
+    comment: Logsearch User
+- name: Add user "kms"
+  user:
+    name: kms
+    uid: 2453
+    group: kms
+    groups: hadoop
+    system: yes
+    shell: /bin/bash
+    home: /home/kms
+    createhome: yes
+    comment: KMS User
+- name: Add user "druid"
+  user:
+    name: druid
+    uid: 2455
+    group: druid
+    groups: hadoop
+    system: yes
+    shell: /bin/bash
+    home: /home/druid
+    createhome: yes
+    comment: DRUID User

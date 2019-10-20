@@ -1,0 +1,72 @@
+---
+#######################################################################
+######################## physical volume ##############################
+########################################################################
+- name: Check pv exist
+  shell: pvdisplay "{{item.pv}}"
+  register: pv_exist
+  ignore_errors: True
+
+- name: Create Physical Group
+  shell: pvcreate "{{item.pv}}"
+  when: pv_exist.rc == 5
+
+#######################################################################
+######################## Volume group    ##############################
+########################################################################
+- name: Check vg exist
+  shell: vgdisplay "{{item.vg}}"
+  register: vg_exist
+  ignore_errors: True
+
+- name: Create Volume Group
+  shell: vgcreate {{item.vg}} {{item.pv}}
+  when: vg_exist.rc == 5
+
+#######################################################################
+######################## LogicalVolume    #############################
+#######################################################################
+- name: "Check LV {{item.name}}"
+  shell: "lvdisplay /dev/{{item.vg}}/{{item.lv}}"
+  register: lv_vg_exist
+  ignore_errors: True
+  
+- name: "Create LV {{item.name}}"
+  shell: lvcreate -n {{item.lv}} -L {{item.size}} {{item.vg}}
+  when: lv_vg_exist.rc == 5
+
+#######################################################################
+######################## MakeFS           #############################
+#######################################################################
+- name: get dm {{item.name}}
+  shell: "ls -l /dev/{{item.vg}}/{{item.lv}} | awk '{ print $11}'"
+  register: dm_usr_output
+
+- name: Check mkfs {{item.name}}
+  shell: "file -s /dev/{{dm_usr_output.stdout | trim | regex_replace('../','')}} |  egrep '^/dev/{{dm_usr_output.stdout | trim | regex_replace('../','')}}:\\sdata$'"
+  register: lv_vg_exist
+  ignore_errors: True
+
+- name: mkfs {{item.name}}
+  shell: "echo 'y\n' | mkfs -t {{item.fsformat}} /dev/{{item.vg}}/{{item.lv}}"
+  when: lv_vg_exist.rc == 0
+
+- name: check {{item.name}} in fstab
+  shell: "cat /etc/fstab | grep {{item.lv}} | grep {{item.vg}}"
+  register: in_fstab
+  ignore_errors: True
+
+- name: 'add {{item.name}}  to fstab'
+  shell: echo '/dev/{{item.vg}}/{{item.lv}}   {{item.name}}          {{item.fsformat}} defaults 0 0' >> /etc/fstab
+  when: in_fstab.rc == 1
+    
+- name: create {{item.name}}
+  file:
+    path: "{{item.name}}"
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  
+- name: mount all dirs
+  shell: mount -a

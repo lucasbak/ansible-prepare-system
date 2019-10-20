@@ -1,0 +1,11 @@
+- name: Create dir certs
+  file:
+    path: "{{ security_ssl_cert_folder }}"
+    state: directory
+
+- name: Copy certs
+  copy:
+    src: "{{ item }}"
+    dest: "{{ security_ssl_cert_folder }}"
+  with_fileglob:
+    - "{{source_cert_folder}}/*.pem"
