@@ -7,5 +7,6 @@ open_jdk_version: 11
 yum_repos: False
 sattelite_repo: False
 provider: 'yum'
+prepare_os_network: False
 fs: []
   
