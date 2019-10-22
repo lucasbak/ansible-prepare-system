@@ -10,7 +10,7 @@
   register: disable_selinux
 
 - name: Reboot
-  shell: shutdown -hr now
+  reboot:
   when: disable_selinux.rc == 0 and disable_selinux.rc is defined
 
 ## THP Settings
