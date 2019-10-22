@@ -12,6 +12,7 @@
 - name: Reboot
   reboot:
   when: disable_selinux.reboot_required and disable_selinux.reboot_required is defined
+  ignore_errors: True
 
 ## THP Settings
 
