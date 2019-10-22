@@ -11,7 +11,7 @@
 
 - name: Reboot
   reboot:
-  when: disable_selinux.rc == 0 and disable_selinux.rc is defined
+  when: disable_selinux.reboot_required and disable_selinux.reboot_required is defined
 
 ## THP Settings
 
