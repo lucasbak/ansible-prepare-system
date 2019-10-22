@@ -9,4 +9,5 @@ sattelite_repo: False
 provider: 'yum'
 prepare_os_network: False
 fs: []
+do_firewalld: False
   
