@@ -1,8 +1,8 @@
-- include: yum_repos.yml
-  when: yum_repos
-
 - include: prepare_os.yml
   when: prepare_os is defined and prepare_os
+
+- include: yum_repos.yml
+  when: yum_repos
 
 - include: prepare_fs.yml
   when: prepare_fs is defined and prepare_fs and fs is defined and {{ fs | count }} > 0
