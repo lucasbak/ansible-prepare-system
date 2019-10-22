@@ -7,6 +7,11 @@
 - name: Disable SELinux
   selinux: state=disabled
   when: (selinux_status.stdout == 'Permissive') or (selinux_status.stdout == 'Enforce') or (selinux_status.stdout == 'Enforcing')
+  register: disable_selinux
+
+- name: Reboot
+  shell: shutdown -hr now
+  when: disable_selinux.rc == 0 and disable_selinux.rc is defined
 
 ## THP Settings
 
