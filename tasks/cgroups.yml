@@ -9,7 +9,7 @@
 - name: Copy systemd service for ambari-agent
   template:
     src: yarn.conf.j2
-    dest: /etc/cgconfig.d/yarn.conf.j2
+    dest: /etc/cgconfig.d/yarn.conf
 
 - name: Enable chkconfig
   command: chkconfig cgconfig on
