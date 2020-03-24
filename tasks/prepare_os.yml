@@ -1,7 +1,7 @@
 # SELinux Settings
 
 - name: get status SELinux
-  shell : getenforce
+  command : getenforce
   register: selinux_status
 
 - name: Disable SELinux
