@@ -1,7 +1,14 @@
-- name: Install Client
-  yum:
-    name: ipa-client
-    state: present
+- name: Required packages (apt)
+  package: name={{item}} state=present use=apt
+  with_items:
+    - freeipa-client
+    - krb5-user
+  when:  ansible_distribution == 'Ubuntu'
+
+- name: Required packages (rhel)
+  package: name={{item}} state=present use=yum
+  with_items:
+    - ipa-client
 
 - name: Check Ipa client already setup
   shell: echo '{{ipaadmin_password}}' | kinit {{ipaserver_principal}} >/dev/null &&  ipa host-find "{{ inventory_hostname }}" 

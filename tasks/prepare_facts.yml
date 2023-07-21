@@ -1,0 +1,21 @@
+# disable yum if we are on ubuntu
+- debug:
+    msg: "{{ ansible_distribution | lower }}"
+- debug:
+    msg: "{{ yum_repos }}"
+
+- name: Disable RHEL if on ubuntu
+  set_fact:
+    yum_repos: False
+  when: ansible_distribution == "Ubuntu"
+
+- name: Disable APT if on RHEL
+  set_fact:
+    apt_repos: False
+  when: ansible_distribution != "Ubuntu"
+
+- name: Set ansible python interpreter
+  set_fact:
+    ansible_python_interpreter: /usr/bin/python3
+  when: ansible_distribution == "Ubuntu"
+

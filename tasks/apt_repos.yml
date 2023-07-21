@@ -1,0 +1,27 @@
+## Copy Repo files
+
+- name: Copy Repo
+  copy:
+    src: "{{ item }}"
+    dest: /etc/apt/sources.list.d/
+  when: offline_apt_repos
+  with_fileglob:
+    - "{{source_repo_folder}}/*.list"
+
+## Required Packages
+
+
+- name: Required packages (apt)
+  package: name={{item}} state=present use=apt
+  with_items:
+    - vim-common
+    - tree
+    - git
+    - nano
+    - vim
+    - unzip
+    - net-tools
+    - wget
+
+- name: update apt cache
+  shell: 'apt update -y'

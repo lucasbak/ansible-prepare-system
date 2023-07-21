@@ -197,6 +197,12 @@
     gid: 2455
     state: present
     system: yes
+- name: Add group "metron"
+  group:
+    name: metron
+    gid: 2456
+    state: present
+    system: yes
 - name: Add user "ambari"
   user:
     name: ambari
@@ -523,3 +529,14 @@
     home: /home/druid
     createhome: yes
     comment: DRUID User
+- name: Add user "metron"
+  user:
+    name: metron
+    uid: 2456
+    group: metron
+    groups: hadoop
+    system: yes
+    shell: /bin/bash
+    home: /home/metron
+    createhome: yes
+    comment: metron User

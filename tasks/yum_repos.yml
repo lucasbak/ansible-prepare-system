@@ -4,7 +4,7 @@
   file:
    path: "{{ item }}"
    state: absent
-  when: not sattelite_repo and do_yum
+  when: not sattelite_repo and offline_yum_repos
   with_items:
   - /etc/yum.repos.d/CentOS-Base.repo
   - /etc/yum.repos.d/CentOS-CR.repo
@@ -15,13 +15,15 @@
   copy:
     src: "{{ item }}"
     dest: /etc/yum.repos.d/
+  when: offline_yum_repos
   with_fileglob:
     - "{{source_repo_folder}}/*.repo"
 
 ## Required Packages
 
-- name: Required packages
-  yum: name={{item}} state=installed
+
+- name: Required packages (yum)
+  package: name={{item}} state=installed use=yum
   with_items:
     - vim-common
     - tree
@@ -32,12 +34,27 @@
     - unzip
     - net-tools
     - wget
-    
-- name: Required packages
-  yum: name={{item}} state=installed
-  with_items:
     - epel-release
-  when: not sattelite_repo
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version < '8'
+
+- debug:
+    msg: "{{ansible_distribution}} {{ansible_distribution_major_version}}"
+
+- name: Required packages (dnf)
+  package: name={{item}} state=installed use=dnf
+  with_items:
+    - vim-common
+    - tree
+    - git
+    - nano
+    - vim
+    - bash-completion
+    - unzip
+    - net-tools
+    - wget
+    - epel-release
+  when: ansible_distribution == "Rocky" or ansible_distribution == "AlmaLinux" and ansible_distribution_major_version >= '8'
+
 
 - name: Clean DBCache
   command: yum clean all

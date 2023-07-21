@@ -1,8 +1,16 @@
+
+- include: prepare_facts.yml
+
+- include: firewalld.yml
+
 - include: prepare_os.yml
   when: prepare_os is defined and prepare_os
 
 - include: yum_repos.yml
   when: yum_repos
+
+- include: apt_repos.yml
+  when: apt_repos
 
 - include: prepare_fs.yml
   when: prepare_fs is defined and prepare_fs and fs is defined and {{ fs | count }} > 0
@@ -32,7 +40,3 @@
 
 - include: cgroups.yml
   when: cgroups_enable is defined and cgroups_enable
-
-- include: prometheus.yml
-  when: prometheus is defined and prometheus
-

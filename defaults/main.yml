@@ -4,10 +4,13 @@ cgroups_enable: False
 oracle_jdk: False
 open_jdk: False
 open_jdk_version: 11
-yum_repos: False
 sattelite_repo: False
+apt_repos: False
+yum_repos: False
 provider: 'yum'
 prepare_os_network: False
 fs: []
 do_firewalld: False
+limits: False
+firewalld_rules: []
   
