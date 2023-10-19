@@ -71,6 +71,7 @@
   register: defrag_enabled
   ignore_errors: True
 
+<<<<<<< HEAD
 
 # - name: Disable THP
 #   shell: >
@@ -78,6 +79,14 @@
 #     echo never > /sys/kernel/mm/transparent_hugepage/defrag
 #   when: (thp_enabled.stdout == '[always]') or (thp_enabled.stdout == '[msadvise]') or (thp_enabled.stdout == '[defer]')
 
+=======
+# - name: Disable THP
+#   shell: >
+#     echo never > /sys/kernel/mm/transparent_hugepage/enabled
+#     echo never > /sys/kernel/mm/transparent_hugepage/defrag
+#   when: (thp_enabled.stdout == '[always]') or (thp_enabled.stdout == '[msadvise]') or (thp_enabled.stdout == '[defer]')
+
+>>>>>>> 8c1d04d (add support for apt)
 # - name: Disable Defrag
 #   shell: >
 #     echo never > /sys/kernel/mm/transparent_hugepage/defrag
