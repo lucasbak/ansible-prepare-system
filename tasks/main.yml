@@ -1,4 +1,21 @@
 
+
+- name: Gather OS facts
+  setup:
+    gather_subset: min
+    filter: ansible_distribution
+
+- name: Set system_major_distribution fact
+  set_fact:
+    system_major_distribution: "redhat"
+  when: ansible_distribution in ['RedHat', 'AlmaLinux', 'RockyLinux', 'CentOS']
+
+- name: Set system_major_distribution fact
+  set_fact:
+    system_major_distribution: "ubuntu"
+  when: ansible_distribution in ['Ubuntu']
+
+
 - include: prepare_facts.yml
 
 - include: firewalld.yml

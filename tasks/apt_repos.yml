@@ -1,17 +1,18 @@
 ## Copy Repo files
+- name: Import Clemlab Jenkins publishing key
+  apt_key:
+    url: http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x449E83E81403D1C5
+    state: present
+
 
 - name: Copy Repo
   copy:
     src: "{{ item }}"
     dest: /etc/apt/sources.list.d/
-  when: offline_apt_repos
+  when: offline_apt_repos is defined and offline_apt_repos
   with_fileglob:
     - "{{source_repo_folder}}/*.list"
 
-- name: Import Clemlab Jenkins publishing key
-  apt_key:
-    url: http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x449E83E81403D1C5
-    state: present
 
 
 - name: Required packages (apt)

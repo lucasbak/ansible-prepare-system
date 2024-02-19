@@ -1,5 +1,10 @@
-## Delete Centos Repo
+## Import new AlmaLinux RPM Key starting January 12th 2024
+- name: Import AlmaLinux GPG key
+  shell: 'rpm --import https://repo.almalinux.org/almalinux/RPM-GPG-KEY-AlmaLinux'
+  when: ansible_distribution == "AlmaLinux"
 
+
+## Delete Centos Repo
 - name:  Delete Centos Files
   file:
    path: "{{ item }}"
@@ -35,10 +40,20 @@
     - net-tools
     - wget
     - epel-release
-  when: ansible_distribution == "CentOS" and ansible_distribution_major_version < '8'
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat" and ansible_distribution_major_version < '8'
 
 - debug:
     msg: "{{ansible_distribution}} {{ansible_distribution_major_version}}"
+
+- name: fetch epel
+  shell: "yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm"
+  when: ansible_distribution == "RedHat" and ansible_distribution_major_version >= '8' or ansible_distribution_major_version >= '9'
+
+# - name: Enable Epel-release on RedHat (dnf)
+#   yum:
+#     name: /tmp/epel-release.rpm
+#     state: present
+  # when: ansible_distribution == "RedHat" and ansible_distribution_major_version >= '8' or ansible_distribution_major_version >= '9'
 
 - name: Required packages (dnf)
   package: name={{item}} state=installed use=dnf

@@ -1,19 +1,30 @@
 
-- name: Install open JDK (RHEL 7)
-  package: name={{item}} state=installed use=yum
-  with_items:
-    - java-1.8.0-openjdk-devel
-  when: ansible_distribution == "CentOS" and ansible_distribution_major_version < '8'
+- block:
+  - name: Install open 8 JDK (RHEL 7/8/9)
+    package: name={{item}} state=installed use=yum
+    with_items:
+      - java-1.8.0-openjdk-devel
+    when: system_major_distribution == "redhat"
 
+  - name: Install open 8 JDK (Ubuntu 22)
+    package: name={{item}} state=present use=apt
+    with_items:
+      - openjdk-8-jdk
+    when: system_major_distribution == "ubuntu"
+  when: open_jdk_version == 8
 
-- name: Install open JDK (RHEL 8)
-  package: name={{item}} state=installed use=dnf
-  with_items:
-    - java-1.8.0-openjdk-devel
-  when: ansible_distribution_major_version >= '8' and ansible_distribution != "Ubuntu"
+- block:
+  - name: Install open 11 JDK (RHEL 8)
+    package: name={{item}} state=installed use=dnf
+    with_items:
+      - java-11-openjdk
+      - java-11-openjdk-devel
+    when: system_major_distribution == "redhat"
 
-- name: Install open JDK (Ubuntu 22)
-  package: name={{item}} state=present use=apt
-  with_items:
-    - openjdk-8-jdk
-  when: ansible_distribution == "Ubuntu"
+  - name: Install open 11 JDK (Ubuntu 22)
+    package: name={{item}} state=present use=apt
+    with_items:
+      - openjdk-11-jdk
+      - openjdk-11-jdk-devel
+    when: system_major_distribution == "ubuntu"
+  when: open_jdk_version == 11

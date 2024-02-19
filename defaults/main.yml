@@ -14,4 +14,5 @@ fs: []
 do_firewalld: False
 limits: False
 firewalld_rules: []
+install_python2: False
   
