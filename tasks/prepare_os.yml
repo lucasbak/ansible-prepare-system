@@ -1,17 +1,52 @@
 # SELinux Settings
 
+- name: Install need python
+  ansible.builtin.raw: yum install -y python2 python3  libselinux-python3 python3-dnf
+  args:
+    executable: /bin/bash
+  when: ansible_distribution_major_version >= '8' and ansible_distribution != "Ubuntu" and ansible_distribution != "RedHat"
+
 - name: get status SELinux
   command : getenforce
   register: selinux_status
+  when: ansible_distribution != "Ubuntu"
+
+- debug:
+    msg: "{{selinux_status}}"
 
 - name: Disable SELinux
   selinux: state=disabled
-  when: (selinux_status.stdout == 'Permissive') or (selinux_status.stdout == 'Enforce') or (selinux_status.stdout == 'Enforcing')
+  when: selinux_status.skip_reason is not defined
   register: disable_selinux
+
+- name: Get grub config status
+  stat:
+    path: /etc/default/grub
+  register: grub_stat
+
+- name: Backup grub config
+  copy:
+    src: /etc/default/grub
+    dest: /etc/default/grub.bak
+    remote_src: yes
+  when: grub_stat.stat.exists
+
+- name: Disable IPv6 in grub
+  lineinfile:
+    path: /etc/default/grub
+    regexp: '^GRUB_CMDLINE_LINUX='
+    line: 'GRUB_CMDLINE_LINUX="ipv6.disable=1"'
+    backrefs: yes
+  register: grub_changed
+
+- name: Update grub
+  command: grub2-mkconfig -o /boot/grub2/grub.cfg
+  when: grub_changed.changed
+
 
 - name: Reboot
   reboot:
-  when: disable_selinux.reboot_required and disable_selinux.reboot_required is defined
+  when: disable_selinux.reboot_required and disable_selinux.reboot_required is defined or grub_changed.changed
   ignore_errors: True
 
 ## THP Settings
@@ -26,19 +61,26 @@
   register: defrag_enabled
   ignore_errors: True
 
-- name: Disable THP
-  shell: >
-    echo never > /sys/kernel/mm/transparent_hugepage/enabled
-    echo never > /sys/kernel/mm/transparent_hugepage/defrag
-  when: (thp_enabled.stdout == '[always]') or (thp_enabled.stdout == '[msadvise]') or (thp_enabled.stdout == '[defer]')
 
-- name: Disable Defrag
-  shell: >
-    echo never > /sys/kernel/mm/transparent_hugepage/defrag
-  when: (defrag_enabled.stdout == '[always]') or (defrag_enabled.stdout == '[msadvise]') or (defrag_enabled.stdout == '[defer]')
+# - name: Disable THP
+#   shell: >
+#     echo never > /sys/kernel/mm/transparent_hugepage/enabled
+#     echo never > /sys/kernel/mm/transparent_hugepage/defrag
+#   when: (thp_enabled.stdout == '[always]') or (thp_enabled.stdout == '[msadvise]') or (thp_enabled.stdout == '[defer]')
+
+# - name: Disable Defrag
+#   shell: >
+#     echo never > /sys/kernel/mm/transparent_hugepage/defrag
+#   when: (defrag_enabled.stdout == '[always]') or (defrag_enabled.stdout == '[msadvise]') or (defrag_enabled.stdout == '[defer]')
 
 
 # Kernel Settings
+
+- name: Sysctl 
+  copy:
+    src: templates/limits.conf.j2
+    dest: /etc/limits/default.conf
+  when: limits
 
 - name: Sysctl 
   copy:
@@ -46,13 +88,12 @@
     dest: /etc/sysctl.d/kernel-custom.conf
   register: copy_sysctl
 
-
 - name: pass kernel option
   shell: sysctl -p /etc/sysctl.d/kernel-custom.conf
 
-- name: Disable firewalld
-  service: name=firewalld state=stopped enabled=no
-  when: do_firewalld
+# - name: Disable firewalld
+#   service: name=firewalld state=stopped enabled=no
+#   when: do_firewalld and ansible_distribution != "Ubuntu"
 
 - sysctl:
     name: vm.swappiness
@@ -76,25 +117,32 @@
     reload: yes
 
 - sysctl:
-    name: net.ipv4.ip_local_port_range
-    value: 10000 65000
+    name: net.ipv6.conf.lo.disable_ipv6
+    value: 0
     sysctl_set: yes
     state: present
     reload: yes
 
-    #  - sysctl:
-    #      name: net.ipv6.conf.all.disable_ipv6
-    #      value: 1
-    #      sysctl_set: yes
-    #      state: present
-    #      reload: yes
-  
-    #  - sysctl:
-    #      name: net.ipv6.conf.default.disable_ipv6
-    #      value: 1
-    #      sysctl_set: yes
-    #      state: present
-    #      reload: yes
+# - sysctl:
+#     name: net.ipv4.ip_local_port_range
+#     value: 10000 65000
+#     sysctl_set: yes
+#     state: present
+#     reload: yes
+
+# - sysctl:
+#     name: net.ipv6.conf.all.disable_ipv6
+#     value: 1
+#     sysctl_set: yes
+#     state: present
+#     reload: yes
+
+# - sysctl:
+#     name: net.ipv6.conf.default.disable_ipv6
+#     value: 1
+#     sysctl_set: yes
+#     state: present
+#     reload: yes
 
 - name: Add umask
   lineinfile:
@@ -132,7 +180,9 @@
   when: prepare_os_network
 
 - name: short fqdn
-  shell: "shortname=`cut -d '.' -f 1 <<< {{inventory_hostname}}`; hostnamectl set-hostname $shortname --transient"
+  shell: 
+    cmd: "shortname=`cut -d '.' -f 1 <<< {{inventory_hostname}}`; hostnamectl set-hostname $shortname --transient"
+    executable: /bin/bash
   when: prepare_os_network
 
 ## Hadoop Group
@@ -155,9 +205,9 @@
     path: /etc/security/serverKeys
     state: directory
 
-- name: Disable ssl check for python
-  lineinfile:
-    path: /etc/python/cert-verification.cfg
-    regexp: '^verify='
-    line: 'verify=disable'
-    state: present
+# - name: Disable ssl check for python
+#   lineinfile:
+#     path: /etc/python/cert-verification.cfg
+#     regexp: '^verify='
+#     line: 'verify=disable'
+#     state: present

@@ -6,6 +6,7 @@ open_jdk: False
 open_jdk_version: 11
 sattelite_repo: False
 apt_repos: False
+offline_apt_repos: True
 yum_repos: False
 provider: 'yum'
 prepare_os_network: False

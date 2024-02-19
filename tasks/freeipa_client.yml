@@ -9,6 +9,7 @@
   package: name={{item}} state=present use=yum
   with_items:
     - ipa-client
+  when:  ansible_distribution != 'Ubuntu'
 
 - name: Check Ipa client already setup
   shell: echo '{{ipaadmin_password}}' | kinit {{ipaserver_principal}} >/dev/null &&  ipa host-find "{{ inventory_hostname }}" 

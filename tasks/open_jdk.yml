@@ -10,7 +10,7 @@
   package: name={{item}} state=installed use=dnf
   with_items:
     - java-1.8.0-openjdk-devel
-  when: (ansible_distribution == "Rocky" and ansible_distribution_major_version >= '8' ) or (ansible_distribution == "AlmaLinux"  and ansible_distribution_major_version >= '8')
+  when: ansible_distribution_major_version >= '8' and ansible_distribution != "Ubuntu"
 
 - name: Install open JDK (Ubuntu 22)
   package: name={{item}} state=present use=apt

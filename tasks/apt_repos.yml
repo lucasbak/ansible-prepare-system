@@ -8,7 +8,10 @@
   with_fileglob:
     - "{{source_repo_folder}}/*.list"
 
-## Required Packages
+- name: Import Clemlab Jenkins publishing key
+  apt_key:
+    url: http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x449E83E81403D1C5
+    state: present
 
 
 - name: Required packages (apt)

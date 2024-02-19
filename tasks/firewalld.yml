@@ -1,0 +1,6 @@
+# - name: Create firewalld rules
+#   firewalld:
+#     port: "{{item.port}}"
+#     permanent: "{{item.permanent}}"
+#     state: "{{item.state}}"
+#   with_items: firewalld_rules

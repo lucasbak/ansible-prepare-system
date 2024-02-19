@@ -4,6 +4,9 @@
 - debug:
     msg: "{{ yum_repos }}"
 
+- debug:
+    msg: "current distribution : {{ansible_distribution}}"
+
 - name: Disable RHEL if on ubuntu
   set_fact:
     yum_repos: False
