@@ -49,15 +49,15 @@
     line: 'GRUB_CMDLINE_LINUX="ipv6.disable=1"'
     backrefs: yes
   register: grub_changed
+  when: disable_ipv6
 
 - name: Update grub
   command: grub2-mkconfig -o /boot/grub2/grub.cfg
-  when: grub_changed.changed
-
+  when: grub_changed is defined and grub_changed.changed
 
 - name: Reboot
   reboot:
-  when: disable_selinux.reboot_required and disable_selinux.reboot_required is defined or grub_changed.changed
+  when: disable_selinux.reboot_required and disable_selinux.reboot_required is defined or (grub_changed is defined and grub_changed.changed)
   ignore_errors: True
 
 ## THP Settings
@@ -112,6 +112,7 @@
     limit_type: '-'
     limit_item: nofile
     value: 32768
+
 - pam_limits:
     domain: '*'
     limit_type: '-'
@@ -142,12 +143,12 @@
     state: present
     reload: yes
 
-- sysctl:
-    name: net.ipv6.conf.lo.disable_ipv6
-    value: 0
-    sysctl_set: yes
-    state: present
-    reload: yes
+# - sysctl:
+#     name: net.ipv6.conf.lo.disable_ipv6
+#     value: 0
+#     sysctl_set: yes
+#     state: present
+#     reload: yes
 
 # - sysctl:
 #     name: net.ipv4.ip_local_port_range
@@ -170,21 +171,6 @@
 #     state: present
 #     reload: yes
 
-- name: Add umask
-  lineinfile:
-    path: /etc/profile
-    line: "umask 0022"
-
-- pam_limits:
-    domain: '*'
-    limit_type: '-'
-    limit_item: nofile
-    value: 32768
-- pam_limits:
-    domain: '*'
-    limit_type: '-'
-    limit_item: nproc
-    value: 65536
 # Network settings
 
 - name: Remove 127.0.0.1 "hostname" from /etc/hosts

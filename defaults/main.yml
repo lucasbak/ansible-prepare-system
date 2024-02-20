@@ -15,4 +15,5 @@ do_firewalld: False
 limits: False
 firewalld_rules: []
 install_python2: False
+disable_ipv6: False
   

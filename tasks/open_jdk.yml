@@ -1,7 +1,7 @@
 
 - block:
   - name: Install open 8 JDK (RHEL 7/8/9)
-    package: name={{item}} state=installed use=yum
+    package: name={{item}} state=installed
     with_items:
       - java-1.8.0-openjdk-devel
     when: system_major_distribution == "redhat"
@@ -15,7 +15,7 @@
 
 - block:
   - name: Install open 11 JDK (RHEL 8)
-    package: name={{item}} state=installed use=dnf
+    package: name={{item}} state=installed
     with_items:
       - java-11-openjdk
       - java-11-openjdk-devel

@@ -46,8 +46,8 @@
     msg: "{{ansible_distribution}} {{ansible_distribution_major_version}}"
 
 - name: fetch epel
-  shell: "yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm"
-  when: ansible_distribution == "RedHat" and ansible_distribution_major_version >= '8' or ansible_distribution_major_version >= '9'
+  shell: "yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ansible_distribution_major_version}}.noarch.rpm"
+  when: system_major_distribution == "redhat" and ansible_distribution_major_version >= '8'
 
 # - name: Enable Epel-release on RedHat (dnf)
 #   yum:
@@ -68,6 +68,7 @@
     - net-tools
     - wget
     - epel-release
+    - chkconfig
   when: ansible_distribution_major_version >= '8' and ansible_distribution != "Ubuntu"
 
 
