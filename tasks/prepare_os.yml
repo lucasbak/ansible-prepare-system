@@ -11,6 +11,11 @@
     -  python3-dnf
   when: ansible_distribution_major_version >= '8' and ansible_distribution != "Ubuntu"
 
+- name: "ROLE[prepare-system] - ACTION[prepare-os] - Set default python to python3 [ubuntu]"
+  shell: update-alternatives --install /usr/bin/python python /usr/bin/python3 1
+  when: ansible_distribution == "Ubuntu"
+
+
 - name: get status SELinux
   command : getenforce
   register: selinux_status
