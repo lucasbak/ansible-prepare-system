@@ -1,10 +1,15 @@
 # SELinux Settings
-
-- name: Install need python
-  ansible.builtin.raw: yum install -y python2 python3  libselinux-python3 python3-dnf
-  args:
-    executable: /bin/bash
-  when: ansible_distribution_major_version >= '8' and ansible_distribution != "Ubuntu" and ansible_distribution != "RedHat"
+- name: "ROLE[prepare-system] - ACTION[prepare-os] - Python3 [redhat]"
+  package:
+    state: present
+    name: "{{item}}"
+    use: yum
+  with_items: 
+    - python2
+    - python3
+    - libselinux-python3
+    -  python3-dnf
+  when: ansible_distribution_major_version >= '8' and ansible_distribution != "Ubuntu"
 
 - name: get status SELinux
   command : getenforce
