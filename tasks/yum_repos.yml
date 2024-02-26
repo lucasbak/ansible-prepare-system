@@ -68,7 +68,6 @@
     - net-tools
     - wget
     - epel-release
-    - chkconfig
   when: ansible_distribution_major_version >= '8' and ansible_distribution != "Ubuntu"
 
 
