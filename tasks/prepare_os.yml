@@ -1,5 +1,9 @@
-# SELinux Settings
-- name: "ROLE[prepare-system] - ACTION[prepare-os] - Python3 [redhat]"
+- name: Install Python2
+  package: 
+    name: python2
+  when: (system_major_distribution == "redhat" and ansible_distribution_major_version < '9' ) or system_major_distribution== 'Ubuntu' and install_python2
+
+- name: "ROLE[prepare-system] - ACTION[prepare-os] - Python3 [redhat7]"
   package:
     state: present
     name: "{{item}}"
@@ -8,14 +12,18 @@
     - python2
     - python3
     - libselinux-python3
-    -  python3-dnf
-  when: ansible_distribution_major_version >= '8' and ansible_distribution != "Ubuntu"
+    - python3-dnf
+  when: ansible_distribution_major_version == 7 and ansible_distribution != "Ubuntu"
 
-- name: Install Python2
-  ansible.builtin.raw: yum install -y python2
-  args:
-    executable: /bin/bash
-  when: (system_major_distribution == "redhat" and ansible_distribution_major_version < '9' ) and install_python2
+- name: "ROLE[prepare-system] - ACTION[prepare-os] - Python3 [redhat8/9]"
+  package:
+    state: present
+    name: "{{item}}"
+  with_items: 
+    - python3
+    - libselinux-python3
+    - python3-dnf
+  when: (ansible_distribution_major_version|int) >= 8 and ansible_distribution != "Ubuntu"
 
 - name: get status SELinux
   command : getenforce
