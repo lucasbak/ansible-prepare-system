@@ -28,3 +28,19 @@
       - openjdk-11-jdk-devel
     when: system_major_distribution == "ubuntu"
   when: open_jdk_version == 11
+
+- block:
+  - name: Install open 17 JDK (RHEL 8)
+    package: name={{item}} state=installed
+    with_items:
+      - java-17-openjdk
+      - java-17-openjdk-devel
+    when: system_major_distribution == "redhat"
+
+  - name: Install open 17 JDK (Ubuntu 22)
+    package: name={{item}} state=present use=apt
+    with_items:
+      - openjdk-17-jdk
+      - openjdk-17-jdk-devel
+    when: system_major_distribution == "ubuntu"
+  when: open_jdk_version == 17
