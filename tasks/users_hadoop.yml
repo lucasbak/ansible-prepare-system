@@ -540,3 +540,13 @@
     home: /home/metron
     createhome: yes
     comment: metron User
+- name: Add user "yarn-ats"
+  user:
+    name: yarn-ats
+    uid: 2457
+    group: yarn-ats
+    groups: hadoop
+    system: yes
+    home: /var/lib/hadoop-yarn-ats
+    createhome: yes
+    comment: Hadoop YARN ATS User
