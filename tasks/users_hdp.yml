@@ -29,6 +29,12 @@
     gid: 2403
     state: present
     system: yes
+- name: Add group "yarn-ats"
+  group:
+    name: yarn-ats
+    gid: 2457
+    state: present
+    system: yes
 - name: Add group "mapred"
   group:
     name: mapred
