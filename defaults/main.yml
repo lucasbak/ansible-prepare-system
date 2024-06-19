@@ -12,6 +12,7 @@ provider: 'yum'
 prepare_os_network: False
 fs: []
 do_firewalld: False
+firewalld_enabled: False
 limits: False
 firewalld_rules: []
 install_python2: False
