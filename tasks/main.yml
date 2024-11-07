@@ -8,52 +8,51 @@
 - name: Set system_major_distribution fact
   set_fact:
     system_major_distribution: "redhat"
-  when: ansible_distribution in ['RedHat', 'AlmaLinux', 'RockyLinux', 'CentOS']
+  when: ansible_distribution in ['RedHat', 'AlmaLinux', 'RockyLinux', 'CentOS', 'Rocky']
 
 - name: Set system_major_distribution fact
   set_fact:
     system_major_distribution: "ubuntu"
   when: ansible_distribution in ['Ubuntu']
 
+- include_tasks: prepare_facts.yml
 
-- include: prepare_facts.yml
+- include_tasks: firewalld.yml
 
-- include: firewalld.yml
-
-- include: prepare_os.yml
+- include_tasks: prepare_os.yml
   when: prepare_os is defined and prepare_os
 
-- include: yum_repos.yml
+- include_tasks: yum_repos.yml
   when: yum_repos
 
-- include: apt_repos.yml
+- include_tasks: apt_repos.yml
   when: apt_repos
 
-- include: prepare_fs.yml
+- include_tasks: prepare_fs.yml
   when: prepare_fs is defined and prepare_fs and fs is defined and {{ fs | count }} > 0
   with_items: "{{fs}}"
 
-- include: users_hdp.yml
+- include_tasks: users_hdp.yml
   when: create_users is defined and create_users
 
-- include: upload_certs.yml
-  when: security_ssl_cert_folder is defined
+- include_tasks: upload_certs.yml
+  when: security_ssl_cert_folder is defined and upload_certs
 
-- include: freeipa_client.yml
+- include_tasks: freeipa_client.yml
   when: freeipa_client is defined and freeipa_client
 
-- include: krb5_client.yml
+- include_tasks: krb5_client.yml
   when: krb5_client is defined and krb5_client
 
-- include: krb5_services.yml
+- include_tasks: krb5_services.yml
   when: create_principals is defined and create_principals
   with_items: "{{krb5_services}}"
 
-- include: oracle_jdk.yml
+- include_tasks: oracle_jdk.yml
   when: oracle_jdk
 
-- include: open_jdk.yml
+- include_tasks: open_jdk.yml
   when: open_jdk
 
-- include: cgroups.yml
+- include_tasks: cgroups.yml
   when: cgroups_enable is defined and cgroups_enable

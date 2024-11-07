@@ -1,7 +1,7 @@
 - name: Install Python2
   package: 
     name: python2
-  when: (system_major_distribution == "redhat" and ansible_distribution_major_version < '9' ) or system_major_distribution== 'Ubuntu' and install_python2
+  when: install_python2 and ((system_major_distribution == "redhat" and ansible_distribution_major_version < '9' ) or system_major_distribution== 'Ubuntu')
 
 - name: "ROLE[prepare-system] - ACTION[prepare-os] - Python3 [redhat7]"
   package:

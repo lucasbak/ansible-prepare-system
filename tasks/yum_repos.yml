@@ -25,51 +25,12 @@
     - "{{source_repo_folder}}/*.repo"
 
 ## Required Packages
-
-
-- name: Required packages (yum)
-  package: name={{item}} state=installed use=yum
-  with_items:
-    - vim-common
-    - tree
-    - git
-    - nano
-    - vim
-    - bash-completion
-    - unzip
-    - net-tools
-    - wget
-    - epel-release
-  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat" and ansible_distribution_major_version < '8'
-
 - debug:
     msg: "{{ansible_distribution}} {{ansible_distribution_major_version}}"
 
 - name: fetch epel
   shell: "yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ansible_distribution_major_version}}.noarch.rpm"
-  when: system_major_distribution == "redhat" and ansible_distribution_major_version >= '8'
-
-# - name: Enable Epel-release on RedHat (dnf)
-#   yum:
-#     name: /tmp/epel-release.rpm
-#     state: present
-  # when: ansible_distribution == "RedHat" and ansible_distribution_major_version >= '8' or ansible_distribution_major_version >= '9'
-
-- name: Required packages (dnf)
-  package: name={{item}} state=installed use=dnf
-  with_items:
-    - vim-common
-    - tree
-    - git
-    - nano
-    - vim
-    - bash-completion
-    - unzip
-    - net-tools
-    - wget
-    - epel-release
-  when: ansible_distribution_major_version >= '8' and ansible_distribution != "Ubuntu"
-
+  when: system_major_distribution == "redhat" # and ansible_distribution != "RedHat"
 
 - name: Clean DBCache
   command: yum clean all

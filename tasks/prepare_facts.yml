@@ -1,6 +1,6 @@
 # disable yum if we are on ubuntu
 - debug:
-    msg: "{{ ansible_distribution | lower }}"
+    msg: "{{ ansible_distribution | lower }} - {{ ansible_distribution_version }}"
 - debug:
     msg: "{{ yum_repos }}"
 
