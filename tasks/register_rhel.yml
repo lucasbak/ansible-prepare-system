@@ -1,0 +1,20 @@
+   - name: Check RedHat Subscription status
+     command: subscription-manager status
+     register: subscription_status
+     changed_when: false
+     ignore_errors: yes
+     when: ansible_distribution == 'RedHat' and (ansible_distribution_major_version == '9' or ansible_distribution_major_version == '8' or ansible_distribution_major_version == '7')
+
+   - name: Unregister RedHat Subscription account if status is UNKNOWN
+     shell: subscription-manager unregister
+     when: subscription_status.stdout.find("Unknown") != -1
+     ignore_errors: yes
+
+   - name: Clean RedHat Subscription if status is UNKNOWN
+     shell: subscription-manager clean
+     when: ansible_distribution == 'RedHat' and (ansible_distribution_major_version == '9' or ansible_distribution_major_version == '8' or ansible_distribution_major_version == '7') and subscription_status.stdout.find('Unknown') != -1
+     ignore_errors: yes
+
+   - name: Register RedHat Subscription account if status is UNKNOWN
+     shell: subscription-manager register --username={{ redhat_username }} --password={{ redhat_password }}
+     when: ansible_distribution == 'RedHat' and (ansible_distribution_major_version == '9' or ansible_distribution_major_version == '8' or ansible_distribution_major_version == '7') and subscription_status.stdout.find('Unknown') != -1

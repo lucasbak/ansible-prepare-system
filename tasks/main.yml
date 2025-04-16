@@ -22,6 +22,8 @@
 - include_tasks: prepare_os.yml
   when: prepare_os is defined and prepare_os
 
+- include_tasks: register_rhel.yml
+  when: register_rhel is defined and register_rhel
 - include_tasks: yum_repos.yml
   when: yum_repos
 

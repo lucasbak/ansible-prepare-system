@@ -43,4 +43,10 @@
       - openjdk-17-jdk
       - openjdk-17-jdk-devel
     when: system_major_distribution == "ubuntu"
-  when: install_openjdk_17
+  when: install_openjdk_17 or open_jdk_version == 17
+
+# - name: Set java alternative to JDK 1.8 on RedHat 9
+#   alternatives:
+#     name: java
+#     path: /usr/lib/jvm/java-1.8.0-openjdk/bin/java
+#   when: system_major_distribution == "redhat" and open_jdk_version == 8 and ansible_distribution_major_version == '9'
