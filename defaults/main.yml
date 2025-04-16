@@ -18,3 +18,4 @@ firewalld_rules: []
 install_python2: False
 disable_ipv6: False
 upload_certs: True
+install_openjdk_17: False
