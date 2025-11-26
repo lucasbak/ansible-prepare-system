@@ -15,7 +15,29 @@
     - python3-dnf
   when: ansible_distribution_major_version == 7 and ansible_distribution != "Ubuntu"
 
-- name: "ROLE[prepare-system] - ACTION[prepare-os] - Python3 [redhat8/9]"
+- name: "ROLE[prepare-system] - ACTION[prepare-os] - Python3 [redhat7]"
+  package:
+    state: present
+    name: "{{item}}"
+    use: yum
+  with_items: 
+    - python2
+    - python3
+    - libselinux-python3
+    - python3-dnf
+  when: ansible_distribution_major_version == 7 and ansible_distribution != "Ubuntu"
+
+
+- name: "ROLE[prepare-system] - ACTION[prepare-os] - Python3 [redhat8]"
+  raw: |
+    set -e
+    dnf -y install \
+      python3 \
+      libselinux-python3 \
+      python3-dnf
+  when: ansible_distribution_major_version == 8 and ansible_distribution != "Ubuntu"
+
+- name: "ROLE[prepare-system] - ACTION[prepare-os] - Python3 [redhat9+]"
   package:
     state: present
     name: "{{item}}"
@@ -23,7 +45,7 @@
     - python3
     - libselinux-python3
     - python3-dnf
-  when: (ansible_distribution_major_version|int) >= 8 and ansible_distribution != "Ubuntu"
+  when: (ansible_distribution_major_version|int) >= 9 and ansible_distribution != "Ubuntu"
 
 - name: get status SELinux
   command : getenforce
@@ -33,10 +55,40 @@
 - debug:
     msg: "{{selinux_status}}"
 
-- name: Disable SELinux
-  selinux: state=disabled
-  when: selinux_status.skip_reason is not defined
-  register: disable_selinux
+- name: Do SELinux actions under platform-python [RHEL9/Ubuntu22+24]
+  block:
+    - name: Disable SELinux
+      ansible.posix.selinux:
+        state: disabled
+      register: disable_selinux
+      when: selinux_status.skip_reason is not defined
+
+  when: ((ansible_distribution_major_version|int) != 8 and ansible_distribution == "RedHat") or ansible_distribution == "Ubuntu"
+
+- name: Do SELinux actions under platform-python [RHEL8]
+  block:
+    - name: Put SELinux in permissive now (no bindings needed)
+      ansible.builtin.command: setenforce 0
+      register: setenforce_rc
+      failed_when: setenforce_rc.rc not in [0,1]   # returns 1 if already permissive/disabled
+      changed_when: setenforce_rc.rc == 0
+
+    - name: Disable SELinux persistently
+      register: disable_selinux
+      when: selinux_status.skip_reason is not defined
+      ansible.builtin.lineinfile:
+        path: /etc/selinux/config
+        regexp: '^SELINUX='
+        line: 'SELINUX=disabled'
+        backup: yes
+  when: (ansible_distribution_major_version|int) == 8 and ansible_distribution == "RedHat"
+
+# - name: Disable SELinux
+#   selinux: state=disabled
+#   when: selinux_status.skip_reason is not defined
+#   register: disable_selinux
+#   vars:
+#     ansible_python_interpreter: /usr/libexec/platform-python
 
 - name: Get grub config status
   stat:
@@ -189,7 +241,7 @@
   when: prepare_os_network
 
 - name: Update /etc/hosts
-  lineinfile: dest=/etc/hosts regexp='.*{{item.fqdn}}$' line='{{item.ip}} {{item.fqdn}} {{item.shortname}}' state=present
+  lineinfile: dest=/etc/hosts regexp='.*{{item.fqdn}}$' line='{{item.ip}} {{item.fqdn}}' state=present
   with_items: "{{ hostnames }}"
   tags:
     - hosts

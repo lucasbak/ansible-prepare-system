@@ -1,12 +1,20 @@
 
 - block:
-  - name: Install open 8 JDK (RHEL 7/8/9)
+  - name: Install open 8 JDK (RHEL 8)
+    raw: |
+      set -e
+      dnf install -y {{item}}
+    with_items:
+      - java-1.8.0-openjdk-devel
+    when: system_major_distribution == "redhat" and ansible_distribution_major_version == "8"
+
+  - name: Install open 8 JDK (RHEL 7/9)
     package: name={{item}} state=installed
     with_items:
       - java-1.8.0-openjdk-devel
-    when: system_major_distribution == "redhat"
+    when: system_major_distribution == "redhat" and ansible_distribution_major_version != "8"
 
-  - name: Install open 8 JDK (Ubuntu 22)
+  - name: Install open 8 JDK (Ubuntu 22/24)
     package: name={{item}} state=present use=apt
     with_items:
       - openjdk-8-jdk
@@ -14,14 +22,23 @@
   when: open_jdk_version == 8
 
 - block:
-  - name: Install open 11 JDK (RHEL 8)
+  - name: Install open 11 JDK (RHEL 7/9+)
     package: name={{item}} state=installed
     with_items:
       - java-11-openjdk
       - java-11-openjdk-devel
-    when: system_major_distribution == "redhat"
+    when: system_major_distribution == "redhat" and ansible_distribution_major_version != "8"
 
-  - name: Install open 11 JDK (Ubuntu 22)
+  - name: Install open 11 JDK (RHEL 8)
+    raw: |
+      set -e
+      dnf install -y {{item}}
+    with_items:
+      - java-11-openjdk
+      - java-11-openjdk-devel
+    when: system_major_distribution == "redhat" and ansible_distribution_major_version == "8"
+
+  - name: Install open 11 JDK (Ubuntu 22/24)
     package: name={{item}} state=present use=apt
     with_items:
       - openjdk-11-jdk
@@ -31,17 +48,25 @@
 
 - block:
   - name: Install open 17 JDK (RHEL 8)
+    raw: |
+      set -e
+      dnf install -y {{item}}
+    with_items:
+      - java-17-openjdk
+      - java-17-openjdk-devel
+    when: system_major_distribution == "redhat" and ansible_distribution_major_version == "8"
+
+  - name: Install open 17 JDK (RHEL 7/9+)
     package: name={{item}} state=installed
     with_items:
       - java-17-openjdk
       - java-17-openjdk-devel
-    when: system_major_distribution == "redhat"
+    when: system_major_distribution == "redhat" and ansible_distribution_major_version != "8"
 
-  - name: Install open 17 JDK (Ubuntu 22)
+  - name: Install open 17 JDK (Ubuntu 22/24)
     package: name={{item}} state=present use=apt
     with_items:
       - openjdk-17-jdk
-      - openjdk-17-jdk-devel
     when: system_major_distribution == "ubuntu"
   when: install_openjdk_17 or open_jdk_version == 17
 

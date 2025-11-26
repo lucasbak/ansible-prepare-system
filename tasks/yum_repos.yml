@@ -34,3 +34,8 @@
 
 - name: Clean DBCache
   command: yum clean all
+
+
+- name: Execute yum update
+  command: yum update -y
+  when: system_major_distribution == "redhat"
