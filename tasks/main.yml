@@ -34,7 +34,7 @@
   when: prepare_fs is defined and prepare_fs and fs is defined and {{ fs | count }} > 0
   with_items: "{{fs}}"
 
-- include_tasks: users_hdp.yml
+- include_tasks: users_odp.yml
   when: create_users is defined and create_users
 
 - include_tasks: upload_certs.yml

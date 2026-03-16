@@ -1,9 +1,22 @@
+
 ## Copy Repo files
 - name: Import Clemlab Jenkins publishing key
   apt_key:
     url: http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x449E83E81403D1C5
     state: present
+  register: clemlab_jenkins_key_result
+  retries: 10
+  delay: 5
+  until: clemlab_jenkins_key_result is succeeded
 
+- name: Import Clemlab Jenkins publishing key
+  apt_key:
+    url: http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3E00E57AD4D182C0
+    state: present
+  register: clemlab_jenkins_key_result_256
+  retries: 10
+  delay: 5
+  until: clemlab_jenkins_key_result_256 is succeeded
 
 - name: Copy Repo
   copy:

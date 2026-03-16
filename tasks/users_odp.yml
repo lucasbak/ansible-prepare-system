@@ -41,6 +41,12 @@
     gid: 2458
     state: present
     system: yes
+- name: Add group "nifi"
+  group:
+    name: nifi
+    gid: 2459
+    state: present
+    system: yes
 - name: Add group "mapred"
   group:
     name: mapred
@@ -213,6 +219,42 @@
   group:
     name: metron
     gid: 2456
+    state: present
+    system: yes
+- name: Add group "yarn-ats"
+  group:
+    name: yarn-ats
+    gid: 2457
+    state: present
+    system: yes
+- name: Add group "httpfs"
+  group:
+    name: httpfs
+    gid: 2458
+    state: present
+    system: yes
+- name: Add group "nifi"
+  group:
+    name: nifi
+    gid: 2459
+    state: present
+    system: yes
+- name: Add group "impala"
+  group:
+    name: impala
+    gid: 2460
+    state: present
+    system: yes
+- name: Add group "kudu"
+  group:
+    name: kudu
+    gid: 2461
+    state: present
+    system: yes
+- name: Add group "polaris"
+  group:
+    name: polaris
+    gid: 2462
     state: present
     system: yes
 - name: Add user "ambari"
@@ -572,3 +614,43 @@
     home: /var/lib/hadoop-httpfs
     createhome: yes
     comment: Hadoop HTTPFS User
+- name: Add user "nifi"
+  user:
+    name: nifi
+    uid: 2459
+    group: nifi
+    groups: hadoop
+    system: yes
+    home: /var/lib/nifi
+    createhome: yes
+    comment: Hadoop nifi User
+- name: Add user "impala"
+  user:
+    name: impala
+    uid: 2460
+    group: impala
+    groups: hadoop
+    system: yes
+    home: /var/lib/impala
+    createhome: yes
+    comment: Impala User
+- name: Add user "kudu"
+  user:
+    name: kudu
+    uid: 2461
+    group: kudu
+    groups: hadoop
+    system: yes
+    home: /var/lib/kudu
+    createhome: yes
+    comment: Kudu User
+- name: Add user "polaris"
+  user:
+    name: polaris
+    uid: 2462
+    group: polaris
+    groups: hadoop
+    system: yes
+    home: /var/lib/polaris
+    createhome: yes
+    comment: Polaris User
